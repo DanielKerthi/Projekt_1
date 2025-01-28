@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forma e Regjistrimit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        .buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            display: none;
+        }
+        .success {
+            color: green;
+            font-size: 1em;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Forma e Regjistrimit</h1>
+    <form id="registrationForm">
+        <label for="emri">Emri</label>
+        <input type="text" id="emri" name="emri">
+        <span class="error" id="errorEmri">Ju lutemi plotësoni fushën emri.</span>
+
+        <label for="mbiemri">Mbiemri</label>
+        <input type="text" id="mbiemri" name="mbiemri">
+        <span class="error" id="errorMbiemri">Ju lutemi plotësoni fushën mbiemri.</span>
+
+        <label for="qyteti">Qyteti</label>
+        <input type="text" id="qyteti" name="qyteti">
+        <span class="error" id="errorQyteti">Ju lutemi plotësoni fushën qyteti.</span>
+
+        <label for="adresa">Adresa</label>
+        <input type="text" id="adresa" name="adresa">
+        <span class="error" id="errorAdresa">Ju lutemi plotësoni fushën adresa.</span>
+
+        <div class="buttons">
+            <button type="button" id="saveButton">Ruaj</button>
+            <button type="reset" id="cancelButton">Anullo</button>
+        </div>
+    </form>
+    <div class="success" id="successMessage">Të dhënat u ruajtën me sukses!</div>
+
+    <script>
+        document.getElementById('saveButton').addEventListener('click', function () {
+            const emri = document.getElementById('emri').value.trim();
+            const mbiemri = document.getElementById('mbiemri').value.trim();
+            const qyteti = document.getElementById('qyteti').value.trim();
+            const adresa = document.getElementById('adresa').value.trim();
+
+            let isValid = true;
+
+            // Validimi
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+            document.getElementById('successMessage').style.display = 'none';
+
+            if (!emri) {
+                document.getElementById('errorEmri').style.display = 'block';
+                isValid = false;
+            }
+            if (!mbiemri) {
+                document.getElementById('errorMbiemri').style.display = 'block';
+                isValid = false;
+            }
+            if (!qyteti) {
+                document.getElementById('errorQyteti').style.display = 'block';
+                isValid = false;
+            }
+            if (!adresa) {
+                document.getElementById('errorAdresa').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Dërgo kërkesën AJAX
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'Save.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        document.getElementById('successMessage').style.display = 'block';
+                    }
+                };
+                xhr.send(`emri=${encodeURIComponent(emri)}&mbiemri=${encodeURIComponent(mbiemri)}&qyteti=${encodeURIComponent(qyteti)}&adresa=${encodeURIComponent(adresa)}`);
+            }
+        });
+
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+            document.getElementById('successMessage').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
